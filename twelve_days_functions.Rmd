@@ -264,14 +264,29 @@ sing_line_without_iteration <- function(dataset, line, phrase_col) {
 # My next idea was to create a helper function that could combine the gifts, which I could then use within lapply. I could not get lapply to work, but this function collapses string lists recursively, which is kinda cool.
 
 recursive_add <- function(char, x = length(char)) {
-  if(x == 0) {
-    return("")
+  if(x == 2) {
+    return(char[2])
   }
-  char[x] <- str_c(char[x], recursive_add(char, x - 1))
+  char[x] <- str_c(char[x], recursive_add(char, x - 1), sep = ", ")
   return(char[x])
 }
 
-
+sing_line_recursive <- function(dataset, line, phrase_col) {
+  
+  num_word <- english::ordinal(line)
+  line_returned <- glue::glue("On the {num_word} day of Christmas, my true love sent to me")
+  
+  if(line == 1){
+    line_returned <- paste(line_returned, phrase_col[1], sep = " ")
+    return(line_returned)
+  }
+  
+  gift_lines <- recursive_add(phrase_col, line)
+  line_returned <- paste(line_returned, gift_lines, sep = " ")
+  line_returned <- paste(line_returned, phrase_col[1], sep = " and ")
+  return(line_returned)
+  
+}
 
 
 ```
@@ -280,7 +295,7 @@ For example,
 
 
 ```{r}
-sing_line(xmas, 
+sing_line_recursive(xmas, 
           line = 7, 
           phrase_col = xmas$Full.Phrase)
 
