@@ -46,7 +46,7 @@ the function takes a gift and returns the appropriate plural.
 
 pluralize_gift <- function(gift){
   
-if(str_detect(string = gift, 
+  if(str_detect(string = gift, 
               pattern = "y$")) {
       gift <- str_replace(string = gift, 
                           pattern = "y$", 
@@ -142,7 +142,8 @@ make_phrase <- function(num, num_word, item, verb, adjective, location) {
   ## Single items starting with a vowel should have "an" in front
   ## All other single items should have "a" in front
   
-  vowel_start <- str_sub(item, 1, 1) %>% str_detect("^[aeiou].")
+  vowel_start <- str_sub(item, 1, 1) %>% 
+    str_detect("^[aeiou].")
   
   if (num > 1) {
     
