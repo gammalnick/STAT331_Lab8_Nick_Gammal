@@ -160,9 +160,15 @@ make_phrase <- function(num, num_word, item, verb, adjective, location) {
     
   }
   
-  glue::glue("{num_word} {adjective} {item} {verb} {location}") %>%
+  if(num > 1) {
+    glue::glue("{num_word} {adjective} {item} {verb} {location}") %>%
     str_squish()
-  
+    
+  } else {
+    glue::glue("{num_word} {adjective} {item} {verb} {location}.") %>%
+    str_squish()
+    
+  }
   
 }
 ```
@@ -212,7 +218,7 @@ Write a function called `sing_line` that takes as input:
 # Arguments -- phrase_col -- The variable name for the column in the dataset that contains the gift phrases
 # Return -- A string singing the line of the song with all gifts for the given day.
 
-sing_line <- function(dataset, line, phrase_col) {
+sing_line_loop <- function(dataset, line, phrase_col) {
   
   # Introduce the day
   
@@ -238,6 +244,23 @@ sing_line <- function(dataset, line, phrase_col) {
   
 }
 
+sing_line_without_iteration <- function(dataset, line, phrase_col) {
+  
+  num_word <- english::ordinal(line)
+  line_returned <- glue::glue("On the {num_word} day of Christmas, my true love sent to me")
+  
+  if(line == 1){
+    line_returned <- paste(line_returned, phrase_col[1], sep = " ")
+    return(line_returned)
+  }
+  
+  gift_lines <- str_c(phrase_col[line:2], collapse = ", ")
+  line_returned <- paste(line_returned, gift_lines, sep = " ")
+  line_returned <- paste(line_returned, phrase_col[1], sep = " and ")
+  return(line_returned)
+  
+}
+
 ```
 
 For example,
@@ -245,7 +268,7 @@ For example,
 
 ```{r}
 sing_line(xmas, 
-          line = 2, 
+          line = 7, 
           phrase_col = xmas$Full.Phrase)
 
 ```
@@ -281,7 +304,7 @@ xmas2 <- xmas %>%
                            make_phrase)
   )
 
-map_chr(1:12, ~sing_line(xmas2, .x, "Full.Phrase")) %>%
+map_chr(1:12, ~sing_line(xmas2, .x, xmas$Full.Phrase)) %>%
   str_c(collapse = "\n") %>%
   cat()
 
