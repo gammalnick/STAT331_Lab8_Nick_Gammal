@@ -227,7 +227,7 @@ sing_line_loop <- function(dataset, line, phrase_col) {
   
   # Sing the gifts
   
-  phrases <- dataset[[phrase_col]]
+  phrases <- phrase_col
   for(i in line:1) {
     if(i == 1) {
       if(line > 1) {
